@@ -47,6 +47,13 @@ class _MyAppState extends State<MyApp> {
               flex: 1,
               child: Column(
                 children: [
+                  Text(
+                    'Flutter Side',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
                   ElevatedButton(
                     onPressed: showWebViewer,
                     child: const Text('Show WebViewer (pdf1)'),
@@ -74,9 +81,27 @@ class _MyAppState extends State<MyApp> {
                         showVersion, // Call showVersion without arguments
                     child: Text(_version), // Use _version as button text
                   ),
-                  Expanded(
-                    flex: 3,
-                    child: Container(),
+                  const Spacer(),
+                  ElevatedButton(
+                    onPressed: () => loadNewDocument('document.pdf'),
+                    child: const Text('save'),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  ElevatedButton(
+                    onPressed: () => loadNewDocument('document.pdf'),
+                    child: const Text('new version'),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  ElevatedButton(
+                    onPressed: () => loadNewDocument('https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf'),
+                    child: const Text('save as new'),
+                  ),
+                  const SizedBox(
+                    height: 5,
                   ),
                   Expanded(
                     flex: 1,
@@ -87,7 +112,7 @@ class _MyAppState extends State<MyApp> {
                         itemCount: _annotationChanges.length,
                         itemBuilder: (context, index) {
                           return ListTile(
-                            title: Text(_annotationChanges[index]),
+                            title: Text(_annotationChanges[index],style: index.isEven ?TextStyle(fontWeight: FontWeight.bold) :TextStyle(fontWeight: FontWeight.w500),),
                           );
                         },
                       ),
@@ -96,11 +121,24 @@ class _MyAppState extends State<MyApp> {
                 ],
               ),
             ),
+            const VerticalDivider(),
             const Expanded(
               flex: 5,
               child: Padding(
                 padding: EdgeInsets.all(8.0),
-                child: HtmlElementView(viewType: viewType),
+                child: Column(
+                  children: [
+                    Text(
+                      'JavaScript Side',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Expanded(child: HtmlElementView(viewType: viewType)),
+                  ],
+                ),
               ),
             ),
           ],
@@ -120,7 +158,7 @@ class _MyAppState extends State<MyApp> {
           'licenseKey':
               'demo:1701188789873:7caa6e08030000000081ca891f3759a6d34f2f8b9631cbb769af02ec8c',
           'initialDoc':
-              'https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf',
+              'document.pdf',
         }),
         viewerElement,
       ]).callMethod('then', [
@@ -141,17 +179,18 @@ class _MyAppState extends State<MyApp> {
             'annotationChanged',
             (annotations, action, info) {
               setState(() {
-                _annotationChanges.add('Annotations changed: $annotations');
-                _annotationChanges.add('Action: $action');
-                _annotationChanges.add('Info: $info');
+                _annotationChanges.add('Annotations changed: $annotations Action: $action , Info: $info' );
+             
               });
             }
           ]);
         },
       ]);
-    }else{
+    } else { loadNewDocument(
+          'document.pdf');
+    
       if (kDebugMode) {
-        print('instance already exists');
+        print('instance already exists, just loading pdf');
       }
     }
   }
@@ -163,7 +202,7 @@ class _MyAppState extends State<MyApp> {
         _version = 'WebViewer version: $version'; // Update _version
       });
     } else {
-      if (kDebugMode) {
+       if (kDebugMode) {
         print('instance is null');
       }
     }
